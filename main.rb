@@ -1,57 +1,173 @@
-class Card
-    attr_accessor :suit
-    attr_accessor :face
-    attr_accessor :value
 
-    def initialize (suit, face, value)
-        @suit = suit
-        @value = value
-        @face = face
-    end
+# To run this, run
+# run `ruby main.rb`
+# from the terminal
+puts "Welcome to Ruby Blackjack"
+
+# ---------------------------------
+# CLASSES
+# ---------------------------------
+
+## CARD CLASS REPRESENTING A SINGLE
+class Card
+
+  attr_accessor :suit
+  attr_accessor :face
+  attr_accessor :value
+
+  def initialize (suit, face, value)
+    @suit = suit
+    @face = face
+    @value = value
+  end
 end
 
+## DECK CLASS REPRESENTING A DECK OF CARDS
 class Deck
 
-    attr_accessor :cards
+  attr_accessor :cards
 
-    def initialize
-        @cards = []
-        suits = ["Hearts", "Spades", "Clubs", "Diamonds"]
-        faces = [
-            ["Ace", 1],
-            ["Two", 2],
-            ["Three", 3],
-            ["Four", 4],
-            ["Five", 5],
-            ["Six", 6],
-            ["Seven", 7],
-            ["Eight", 8],
-            ["Nine", 9],
-            ["Ten", 10],
-            ["Jack", 10],
-            ["Queen", 10],
-            ["King", 10]
-        ]
+  def initialize
+    @cards = []
+    suits = ["Hearts", "Spades", "Clubs", "Diamonds"]
+    faces = [
+      ["Ace", 1],
+      ["2", 2],
+      ["3", 3],
+      ["4", 4],
+      ["5", 5],
+      ["6", 6],
+      ["7", 7],
+      ["8", 8],
+      ["9", 9],
+      ["10", 10],
+      ["Jack", 10],
+      ["Queen", 10],
+      ["King", 10]
+    ]
 
-suits.each do |s|
-    faces.each do |f|
+    # Loop through cards to create the deck
+    suits.each do |s|
+      faces.each do |f|
         @cards.push(Card.new(s, f[0], f[1]))
+      end
     end
+
+    # Shuffle the deck
+    @cards.shuffle!
+    @cards.shuffle!
+    @cards.shuffle!
+
+  end
+
+# Method to deal cards to players
+  def deal_card(h)
+    h.hand.push(@cards.pop)
+  end
 end
 
-    @cards.shuffle!
-    @cards.shuffle!
-    @cards.shuffle!
 
-    end
-end
 
-deck = Deck.new
-p deck.cards
-
-class Hand
+# PLAYER CLASS REPRESENTING A PLAYER'S HAND
+class Player
     attr_accessor :hand
-    
-    def initialize
+    attr_accessor :name
+    attr_accessor :bankroll
+
+    def initialize name, bankroll
         @hand = []
+        @name = name
+        @bankroll = bankroll
     end
+
+    def sum_hand
+        @hand.reduce(0) { |t, c| t + c.value}
+    end
+end
+
+# ----------------------------------
+# OBJECTS
+# ----------------------------------
+
+# Create instances of Player
+human = Player.new "Human", 100
+dealer = Player.new "The House (dealer)", 10000
+deck = Deck.new
+
+# ----------------------------------
+# METHODS
+# ----------------------------------
+# Function to determine win or lose. Receives two players as arguments. In our case, human and dealer.
+def win(h, d)
+  ht = h.sum_hand
+  dt = d.sum_hand
+
+  return false if ht < 21
+  return true if dt > 21
+  return true if ht == 21
+  return true if ht > dt
+  return false
+end
+
+# ----------------------------------
+# GAME LOGIC
+# ----------------------------------
+
+def player_name
+    puts "What is your name?"
+    name = gets.chomp
+end
+
+puts "Ok #{player_name}, let's play a round!"
+
+while(true)
+
+  ## DEAL CARDS
+  deck.deal_card(human)
+  deck.deal_card(human)
+  deck.deal_card(dealer)
+  deck.deal_card(dealer)
+
+  # Show face-up cards
+  puts "Your face up card is #{human.hand[0].face} of #{human.hand[0].suit}"
+  puts "Dealers face up card is #{dealer.hand[0].face} of #{dealer.hand[0].suit}"
+
+  #Ask player to hit or stand
+  puts "Would you like to (H)it or (S)tand"
+  input = gets.chomp
+
+  # deal card if chose to hit
+  if input == "H"
+      deck.deal_card(human)
+      deck.deal_card(dealer)
+  end
+
+
+  # Determine the winner and print hand values
+  if win(human, dealer)
+    p "You won! The dealer has #{dealer.sum_hand} and you have #{human.sum_hand}."
+  else
+    p "You lost! The dealer has #{dealer.sum_hand} and you have #{human.sum_hand}."
+  end
+
+  # Ask if they want to stop playing
+  p "type (Y) if you want to end the game"
+  gameend = gets.chomp
+
+  # End the game
+  if gameend == "Y"
+    break
+  end
+
+  # EMpty the hands
+  human.hand.clear
+  dealer.hand.clear
+
+  # check if the deck is almost empty
+  if deck.cards.length < 10
+    deck = Deck.new
+  end
+
+  # Let the loop repeat
+
+end

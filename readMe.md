@@ -20,3 +20,27 @@ h.hand.push(@cards.pop)
 ```
 
 7. Inside hand class, make a method to find the sum of a hand. `@hand.reduce(0) { |sum, num| num + sum}`
+
+---
+
+# GAME LOGIC
+
+## Game setup, setup all game state
+
+1. Game needs to players, human and computer. Create each of them as an object of Hand class
+
+2. Create the deck (=Deck.new)
+
+3. Create infinite loop while(true)
+
+4. Each player gets dealt two cards
+
+```
+deck.deal_card(player)
+```
+
+5. Print the face-up card for both human and computer
+
+```
+#{human.hand[0].face} of #{human.hand[0].suit}
+```
