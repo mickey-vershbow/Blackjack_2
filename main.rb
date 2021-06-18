@@ -102,11 +102,17 @@ def win(h, d)
   ht = h.sum_hand
   dt = d.sum_hand
 
-  return false if ht < 21
+  if ht == dt
+    p "It's a tie!"
+
+  else
+
+  return false if ht > 21
   return true if dt > 21
   return true if ht == 21
   return true if ht > dt
   return false
+  end
 end
 
 # ----------------------------------
@@ -121,6 +127,16 @@ end
 puts "Ok #{player_name}, let's play a round!"
 
 while(true)
+
+  p "Do you want to [d]eal, [c]heck your bankroll, or [q]uit?"
+  input = gets.chomp
+
+  # ------- CHECK BANKROLL --------
+  if input == "c"
+    p "Your bankroll is currently at $#{human.bankroll}."
+  end
+
+  if input == "d"
 
   ## DEAL CARDS
   deck.deal_card(human)
@@ -142,6 +158,9 @@ while(true)
       deck.deal_card(dealer)
   end
 
+   # Show new cards cards
+  puts "Your new card is #{human.hand[1].face} of #{human.hand[1].suit}"
+  puts "Dealers' new card is #{dealer.hand[1].face} of #{dealer.hand[1].suit}"
 
   # Determine the winner and print hand values
   if win(human, dealer)
@@ -167,6 +186,7 @@ while(true)
   if deck.cards.length < 10
     deck = Deck.new
   end
+end
 
   # Let the loop repeat
 
