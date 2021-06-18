@@ -115,17 +115,14 @@ def win(h, d)
   end
 end
 
-# Bankroll Functions
-# Add $10 to human bankroll
-def player_bankroll_win
-  human.bankroll = human.bankroll + 10
-  dealer.bankroll = dealer.bankroll - 10
-end
+ # Bankroll Functions
+    # Add $10 to (w)inning (h)and, subtract from (l)osing (h)and
 
-def player_bankroll_lose
-  human.bankroll = human.bankroll - 10
-  dealer.bankroll = dealer.bankroll + 10
-end
+    def player_bankroll_change wh, ls
+      wh.bankroll = wh.bankroll + 10
+      ls.bankroll = ls.bankroll - 10
+    end
+
 
 # ----------------------------------
 # GAME LOGIC
@@ -180,14 +177,12 @@ while(true)
   # Determine the winner and print hand values
   if win(human, dealer)
     p "You won! The dealer has #{dealer.sum_hand} and you have #{human.sum_hand}."
-    human.bankroll = human.bankroll + 10
-  dealer.bankroll = dealer.bankroll - 10
-    p "----> You made $10. Your current bankroll is #{human.bankroll}"
+    player_bankroll_change(human, dealer)
+    p "----> You made $10. Your current bankroll is #{human.bankroll} and the dealer's bankroll is #{dealer.bankroll}."
   else
     p "You lost! The dealer has #{dealer.sum_hand} and you have #{human.sum_hand}."
-    human.bankroll = human.bankroll - 10
-  dealer.bankroll = dealer.bankroll + 10
-    p "----> You lost $10. Your current bankroll is #{human.bankroll}"
+    player_bankroll_change(dealer, human)
+    p "----> You lost $10. Your current bankroll is #{human.bankroll} and the dealer's bankroll is #{dealer.bankroll}."
   end
 
   # Ask if they want to stop playing
