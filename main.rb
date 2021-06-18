@@ -99,29 +99,21 @@ deck = Deck.new
 # ----------------------------------
 # Function to determine win or lose. Receives two players as arguments. In our case, human and dealer.
 def win(h, d)
-  ht = h.sum_hand
-  dt = d.sum_hand
+  human_total = h.sum_hand
+  dealer_total = d.sum_hand
 
-  if ht == dt
+  if human_total == dealer_total
     p "It's a tie!"
 
   else
 
-  return false if ht > 21
-  return true if dt > 21
-  return true if ht == 21
-  return true if ht > dt
+  return false if human_total > 21
+  return true if dealer_total > 21
+  return true if human_total == 21
+  return true if human_total > dealer_total
   return false
   end
 end
-
- # Bankroll Functions
-    # Add $10 to (w)inning (h)and, subtract from (l)osing (h)and
-
-    def player_bankroll_change wh, ls
-      wh.bankroll = wh.bankroll + 10
-      ls.bankroll = ls.bankroll - 10
-    end
 
 
 # ----------------------------------
@@ -133,9 +125,9 @@ def player_name
     name = gets.chomp
 end
 
-puts "Ok #{player_name}, let's play a round!"
+puts "Ok #{player_name}, let's get this road on the show!"
 
-p "Do you want to [d]eal or [c]heck your bankroll?"
+p "Do you want to [p]lay a round or [c]heck your bankroll?"
 input = gets.chomp
 
 
@@ -145,7 +137,21 @@ if input == "c"
 end
 
 # ------- DEAL THE GAME --------
-if input == "d"
+if input == "p"
+  p "Do you want to be the [d]efault amount of $10, or [a]nother amount?"
+  input = gets.chomp
+
+  default_user_bet = 10
+
+  if input == "d"
+    user_bet = 10
+  end
+
+  if input == "a"
+    p "How much would you like to bet? Type any amount less than or equal to your current bankroll ($#{human.bankroll})"
+    bet = gets.chomp
+    user_bet = bet.to_i
+  end
 
 while(true)
 
@@ -160,33 +166,39 @@ while(true)
   puts "Your face up card is #{human.hand[0].face} of #{human.hand[0].suit}"
   puts "Dealers face up card is #{dealer.hand[0].face} of #{dealer.hand[0].suit}"
 
-  #Ask player to hit or stand
+  # Ask player to hit or stand
   puts "Would you like to (H)it or (S)tand"
   input = gets.chomp
 
-  # deal card if chose to hit
+  # Deal card if player chooses to hit
   if input == "H"
       deck.deal_card(human)
       deck.deal_card(dealer)
   end
 
-  # Show new cards cards
-  puts "Your new card is #{human.hand[1].face} of #{human.hand[1].suit}"
-  puts "Dealers' new card is #{dealer.hand[1].face} of #{dealer.hand[1].suit}"
+  # Show new cards
+  puts "** Your new card is #{human.hand[1].face} of #{human.hand[1].suit}"
+  puts "** Dealers' new card is #{dealer.hand[1].face} of #{dealer.hand[1].suit}"
 
   # Determine the winner and print hand values
   if win(human, dealer)
-    p "You won! The dealer has #{dealer.sum_hand} and you have #{human.sum_hand}."
-    player_bankroll_change(human, dealer)
-    p "----> You made $10. Your current bankroll is #{human.bankroll} and the dealer's bankroll is #{dealer.bankroll}."
+    p "-> You won! The dealer has #{dealer.sum_hand} and you have #{human.sum_hand}."
+    # default_bankroll(human, dealer)
+    # Subtract user_bet from player hand and add to dealer hand
+    human.bankroll = human.bankroll + user_bet
+    dealer.bankroll = dealer.bankroll - user_bet
+    p "--> You made $10. Your current bankroll is #{human.bankroll} and the dealer's bankroll is #{dealer.bankroll}."
   else
-    p "You lost! The dealer has #{dealer.sum_hand} and you have #{human.sum_hand}."
-    player_bankroll_change(dealer, human)
-    p "----> You lost $10. Your current bankroll is #{human.bankroll} and the dealer's bankroll is #{dealer.bankroll}."
+    p "-> You lost! The dealer has #{dealer.sum_hand} and you have #{human.sum_hand}."
+    # player_bankroll_change(dealer, human)
+    # Subtract user_bet from player hand and add to dealer hand
+    human.bankroll = human.bankroll - user_bet
+    dealer.bankroll = dealer.bankroll + user_bet
+    p "--> You lost $10. Your current bankroll is #{human.bankroll} and the dealer's bankroll is #{dealer.bankroll}."
   end
 
   # Ask if they want to stop playing
-  p "Type (Y) if you want to end the game, otherwise type (N) to continue playing."
+  p "----> Type (Y) if you want to end the game, otherwise type (N) to continue playing."
   gameover = gets.chomp
 
   # End the game
@@ -194,7 +206,7 @@ while(true)
     break
   end
 
-  # EMpty the hands
+  # Empty the hands
   human.hand.clear
   dealer.hand.clear
 
@@ -204,6 +216,6 @@ while(true)
   end
 end
 
-  # Let the loop repeat
+  # Else let the loop repeat
 
 end
