@@ -115,6 +115,18 @@ def win(h, d)
   end
 end
 
+# Bankroll Functions
+# Add $10 to human bankroll
+def player_bankroll_win
+  human.bankroll = human.bankroll + 10
+  dealer.bankroll = dealer.bankroll - 10
+end
+
+def player_bankroll_lose
+  human.bankroll = human.bankroll - 10
+  dealer.bankroll = dealer.bankroll + 10
+end
+
 # ----------------------------------
 # GAME LOGIC
 # ----------------------------------
@@ -126,17 +138,20 @@ end
 
 puts "Ok #{player_name}, let's play a round!"
 
+p "Do you want to [d]eal or [c]heck your bankroll?"
+input = gets.chomp
+
+
+# ------- CHECK BANKROLL --------
+if input == "c"
+  p "Your bankroll is currently at $#{human.bankroll}."
+end
+
+# ------- DEAL THE GAME --------
+if input == "d"
+
 while(true)
 
-  p "Do you want to [d]eal, [c]heck your bankroll, or [q]uit?"
-  input = gets.chomp
-
-  # ------- CHECK BANKROLL --------
-  if input == "c"
-    p "Your bankroll is currently at $#{human.bankroll}."
-  end
-
-  if input == "d"
 
   ## DEAL CARDS
   deck.deal_card(human)
@@ -158,23 +173,29 @@ while(true)
       deck.deal_card(dealer)
   end
 
-   # Show new cards cards
+  # Show new cards cards
   puts "Your new card is #{human.hand[1].face} of #{human.hand[1].suit}"
   puts "Dealers' new card is #{dealer.hand[1].face} of #{dealer.hand[1].suit}"
 
   # Determine the winner and print hand values
   if win(human, dealer)
     p "You won! The dealer has #{dealer.sum_hand} and you have #{human.sum_hand}."
+    human.bankroll = human.bankroll + 10
+  dealer.bankroll = dealer.bankroll - 10
+    p "----> You made $10. Your current bankroll is #{human.bankroll}"
   else
     p "You lost! The dealer has #{dealer.sum_hand} and you have #{human.sum_hand}."
+    human.bankroll = human.bankroll - 10
+  dealer.bankroll = dealer.bankroll + 10
+    p "----> You lost $10. Your current bankroll is #{human.bankroll}"
   end
 
   # Ask if they want to stop playing
-  p "type (Y) if you want to end the game"
-  gameend = gets.chomp
+  p "Type (Y) if you want to end the game, otherwise type (N) to continue playing."
+  gameover = gets.chomp
 
   # End the game
-  if gameend == "Y"
+  if gameover == "Y"
     break
   end
 
