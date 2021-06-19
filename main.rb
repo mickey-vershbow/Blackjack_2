@@ -125,9 +125,7 @@ def player_name
     name = gets.chomp
 end
 
-puts "Ok #{player_name}, let's get this road on the show!"
-
-p "Do you want to [p]lay a round or [c]heck your bankroll?"
+puts "Welcome, #{player_name}! Do you want to [p]lay a round or [c]heck your bankroll?"
 input = gets.chomp
 
 
@@ -136,72 +134,73 @@ if input == "c"
   p "Your bankroll is currently at $#{human.bankroll}."
 end
 
-# ------- DEAL THE GAME --------
+# ------- PLAY A ROUND -- DEFAULT OR CUSTOM BET? --------
 if input == "p"
   p "Do you want to be the [d]efault amount of $10, or [a]nother amount?"
   input = gets.chomp
 
-  default_user_bet = 10
-
+  # ---------- DEFAULT BET --------- #
   if input == "d"
     user_bet = 10
   end
 
+  # ---------- CUSTOM BET --------- #
   if input == "a"
     p "How much would you like to bet? Type any amount less than or equal to your current bankroll ($#{human.bankroll})"
     bet = gets.chomp
     user_bet = bet.to_i
   end
 
+# ----------------------------------
+# GAME LOOP
+# ----------------------------------
+
 while(true)
 
-
-  ## DEAL CARDS
+  # ---------- DEAL CARDS --------- #
   deck.deal_card(human)
   deck.deal_card(human)
   deck.deal_card(dealer)
   deck.deal_card(dealer)
 
-  # Show face-up cards
+  # ---------- SHOW FACE-UP CARD ---------- #
   puts "Your face up card is #{human.hand[0].face} of #{human.hand[0].suit}"
   puts "Dealers face up card is #{dealer.hand[0].face} of #{dealer.hand[0].suit}"
 
-  # Ask player to hit or stand
+  # ---------- HIT OR STAND? --------- #
   puts "Would you like to (H)it or (S)tand"
   input = gets.chomp
 
-  # Deal card if player chooses to hit
+  # ---------- HIT - DEAL CARD --------- #
   if input == "H"
       deck.deal_card(human)
       deck.deal_card(dealer)
   end
 
-  # Show new cards
+  # ---------- SHOW NEW CARD --------- #
   puts "** Your new card is #{human.hand[1].face} of #{human.hand[1].suit}"
   puts "** Dealers' new card is #{dealer.hand[1].face} of #{dealer.hand[1].suit}"
 
-  # Determine the winner and print hand values
+  # ---------- DETERMINE THE WINNER, PRINT VALUES--------- #
   if win(human, dealer)
     p "-> You won! The dealer has #{dealer.sum_hand} and you have #{human.sum_hand}."
-    # default_bankroll(human, dealer)
     # Subtract user_bet from player hand and add to dealer hand
     human.bankroll = human.bankroll + user_bet
     dealer.bankroll = dealer.bankroll - user_bet
-    p "--> You made $10. Your current bankroll is #{human.bankroll} and the dealer's bankroll is #{dealer.bankroll}."
+    p "--> You made #{user_bet}. Your current bankroll is #{human.bankroll} and the dealer's bankroll is #{dealer.bankroll}."
   else
     p "-> You lost! The dealer has #{dealer.sum_hand} and you have #{human.sum_hand}."
-    # player_bankroll_change(dealer, human)
     # Subtract user_bet from player hand and add to dealer hand
     human.bankroll = human.bankroll - user_bet
     dealer.bankroll = dealer.bankroll + user_bet
-    p "--> You lost $10. Your current bankroll is #{human.bankroll} and the dealer's bankroll is #{dealer.bankroll}."
+    p "--> You lost #{user_bet}. Your current bankroll is #{human.bankroll} and the dealer's bankroll is #{dealer.bankroll}."
   end
 
-  # Ask if they want to stop playing
+  # ---------- PLAY ANOTHER ROUND OR QUIT? --------- #
   p "----> Type (Y) if you want to end the game, otherwise type (N) to continue playing."
   gameover = gets.chomp
 
-  # End the game
+  # ---------- END THE GAME --------- #
   if gameover == "Y"
     break
   end
@@ -216,6 +215,6 @@ while(true)
   end
 end
 
-  # Else let the loop repeat
+  # ---------- ELSE LET THE LOOP REPEAT --------- #
 
 end
